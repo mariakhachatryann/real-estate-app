@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('property_features', function (Blueprint $table) {
-            $table->unsignedBigInteger('property_id');
-            $table->foreign('property_id')->references('id')->on('property_details')->onDelete('cascade');
-            $table->unsignedBigInteger('feature_id');
+            $table->unsignedBigInteger('property_id')->nullable();
+            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
+            $table->unsignedBigInteger('feature_id')->nullable();
             $table->foreign('feature_id')->references('id')->on('features')->onDelete('cascade');
             $table->timestamps();
         });

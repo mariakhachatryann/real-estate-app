@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('property_details', function (Blueprint $table) {
+        Schema::create('properties', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title');
-            $table->string('status');
-            $table->string('type');
-            $table->integer('area');
+            $table->integer('status');
+            $table->integer('type');
+            $table->double('area');
             $table->integer('rooms');
             $table->string('description');
-            $table->integer('building_age');
-            $table->integer('bedrooms');
-            $table->integer('bathrooms');
+            $table->integer('building_age')->nullable();
+            $table->integer('bedrooms')->nullable();
+            $table->integer('bathrooms')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('property_details');
+        Schema::dropIfExists('properties');
     }
 };
