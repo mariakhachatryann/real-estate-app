@@ -146,7 +146,7 @@
                                 </a>
                                 <div class="listing-content">
                                     <div class="listing-title">
-                                        <h4><a href="single-property-page-1.html">{{ $property->title }}</a></h4>
+                                        <h4><a href="{{ route('properties.show', $property->id) }}">{{ $property->title }}</a></h4>
                                         <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom"
                                            class="listing-address popup-gmaps">
                                             <i class="fa fa-map-marker"></i>

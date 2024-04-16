@@ -13,7 +13,7 @@
                     <!-- Breadcrumbs -->
                     <nav id="breadcrumbs">
                         <ul>
-                            <li><a href="/">Home</a></li>
+                            <li><a href="/properties">Home</a></li>
                             <li>My Properties</li>
                         </ul>
                     </nav>
@@ -59,7 +59,6 @@
                                 <form action="{{ route('properties.destroy', $property->id) }}" method="post">
                                     @csrf
                                     @method('DELETE')
-{{--                                    <a class="delete"><i class="fa fa-remove"></i> Delete</a>--}}
                                     <button class="delete" type="submit" style="border: none; background: none; padding: 0;"><i
                                             class="fa fa-remove"></i> Delete
                                     </button>
@@ -68,7 +67,7 @@
                         </tr>
                     @endforeach
                 </table>
-                <a href="/submit" class="margin-top-40 button">Submit New Property</a>
+                <a href="{{ route('properties.create') }}" class="margin-top-40 button">Submit New Property</a>
             </div>
 
         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddPropertyRequest;
+use App\Http\Requests\SearchPropertyRequest;
 use App\Models\Feature;
 use App\Models\Property;
 use App\Models\PropertyAddress;
@@ -201,5 +202,82 @@ class PropertyController extends Controller
         $property->delete();
 
         return redirect()->back()->with('success', 'Property deleted successfully');
+    }
+
+
+    public function search(SearchPropertyRequest $request)
+    {
+        $properties = Property::with('images', 'address')
+            ->latest()
+            ->take(10);
+
+        $statuses = self::STATUSES;
+        $allFeatures = Feature::all();
+
+        if ($request->isMethod('post')) {
+            $status = $request->status;
+            $type = $request->type;
+            $minArea = $request->min_area;
+            $maxArea = $request->max_area;
+            $minPrice = $request->min_price;
+            $maxPrice = $request->max_price;
+            $age = $request->age;
+            $rooms = $request->rooms;
+            $beds = $request->bedrooms;
+            $baths = $request->bathrooms;
+
+            $properties->where(function($query) use ($status, $type, $minArea, $maxArea, $minPrice, $maxPrice, $age, $rooms, $beds, $baths) {
+                if ($status != -1) {
+                    $query->where('status', $status);
+                }
+                if ($type != -1) {
+                    $query->where('type', $type);
+                }
+                if (!empty($minArea)) {
+                    $query->where('area', '>=', $minArea);
+                }
+                if (!empty($maxArea)) {
+                    $query->where('area', '<=', $maxArea);
+                }
+                if (!empty($minPrice)) {
+                    $query->where('price', '>=', $minPrice);
+                }
+                if (!empty($maxPrice)) {
+                    $query->where('price', '<=', $maxPrice);
+                }
+                if (!empty($age)) {
+                    $query->where('building_age', '<=', $age);
+                }
+                if (!empty($rooms)) {
+                    $query->where('rooms', '=', $rooms);
+                }
+                if (!empty($beds)) {
+                    $query->where('bedrooms', '=', $beds);
+                }
+                if (!empty($baths)) {
+                    $query->where('bathrooms', '=', $baths);
+                }
+
+            });
+
+            $address = $request->address;
+            $features = $request->features;
+
+            if (!empty($address)) {
+                $properties->whereHas('address', function($query) use ($address) {
+                    $query->where('address', 'like', '%' . $address . '%');
+                });
+            }
+
+            if (!empty($features)) {
+                $properties->whereHas('features', function($query) use ($features) {
+                    $query->whereIn('id', $features);
+                });
+            }
+
+        }
+
+        $properties = $properties->get();
+        return view('search', compact('properties', 'statuses', 'allFeatures'));
     }
 }

@@ -78,21 +78,6 @@
                         <button type="submit" class="button margin-top-20 margin-bottom-20">Save Changes</button>
                     </form>
 
-                    <div class="col-md-4">
-                        <!-- Avatar -->
-                        <div class="edit-profile-photo">
-                            <img src="images/agent-02.jpg" alt="">
-                            <div class="change-photo-btn">
-                                <div class="photoUpload">
-                                    <span><i class="fa fa-upload"></i> Upload Photo</span>
-                                    <input type="file" class="upload" />
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
                 </div>
             </div>
 

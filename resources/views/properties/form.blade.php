@@ -420,6 +420,7 @@
                         },
                         success: function (response) {
                             checkbox.text(newFeatureName);
+                            location.reload();
                         },
                         error: function (xhr, status, error) {
                             console.error(error);

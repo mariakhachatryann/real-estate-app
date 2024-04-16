@@ -232,6 +232,10 @@
                             </ul>
                         </li>
 
+                        <li><a href="/search">Search</a>
+
+                        </li>
+
                     </ul>
                 </nav>
                 <div class="clearfix"></div>
@@ -254,7 +258,7 @@
 
                 @auth('user')
                     <div class="user-menu">
-                        <div class="user-name"><span><img src="images/agent-03.jpg" alt=""></span>Hi, {{ Auth::guard('user')->user()->username }}!</div>
+                        <div class="user-name"><span></span>Hi, {{ Auth::guard('user')->user()->username }}!</div>
                         <ul>
                             <li><a href="{{ route('myProfile') }}"><i class="sl sl-icon-user"></i> My Profile</a></li>
                             <li><a href="my-bookmarks.html"><i class="sl sl-icon-star"></i> Bookmarks</a></li>

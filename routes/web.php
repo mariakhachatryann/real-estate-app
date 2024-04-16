@@ -1,14 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FeaturesController;
-use App\Http\Controllers\ViewsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\FeatureController;
-use Illuminate\Http\Request;
-use App\Models\Admin;
+use App\Http\Controllers\SearchController;
 
 Route::resource('properties', PropertyController::class);
 Route::resource('features', FeatureController::class);
@@ -22,6 +19,8 @@ Route::get('/loginReg', [UserController::class, 'loginRegView'])->name('loginVie
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+Route::match(['get', 'post'], '/search', [PropertyController::class, 'search'])->name('search');
 
 Route::middleware(['auth:user'])->group(function () {
     Route::get('/myProperties', [PropertyController::class, 'getUserProperties'])->name('myProperties');

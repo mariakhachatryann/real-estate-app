@@ -27,7 +27,7 @@ class AddPropertyRequest extends FormRequest
             'type' => 'required|in:0,1,2,3,4',
             'price' => 'required|numeric',
             'area' => 'required|numeric',
-            'rooms' => 'required|integer|min:1',
+            'rooms' => 'required|integer|min:-1',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
@@ -40,7 +40,7 @@ class AddPropertyRequest extends FormRequest
             'features.*' => 'exists:features,id',
             'user_name' => 'required|string|max:20',
             'user_email' => 'required|string|email',
-            'user_phone' => 'required|string'
+            'user_phone' => 'nullable|string'
         ];
     }
 }
