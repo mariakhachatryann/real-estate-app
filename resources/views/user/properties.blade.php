@@ -56,11 +56,11 @@
                             <td class="expire-date">{{ $property->created_at->addMonth()->format('Y-m-d H:i:s') }}</td>
                             <td class="action">
                                 <a href="{{ route('properties.edit', $property->id) }}"><i class="fa fa-pencil"></i> Edit</a>
-                                <form action="{{ route('properties.destroy', $property->id) }}" method="post">
+                                <form action="{{ route('properties.destroy', $property->id) }}" method="post" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="delete" type="submit" style="border: none; background: none; padding: 0;"><i
-                                            class="fa fa-remove"></i> Delete
+                                    <button type="submit" class="delete" style="border: none; background: none; padding: 0;" onclick="return confirm('Are you sure you want to delete this property?')">
+                                        <i class="fa fa-remove"></i> Delete
                                     </button>
                                 </form>
                             </td>

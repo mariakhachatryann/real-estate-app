@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('property_images', function (Blueprint $table) {
-            $table->id();
+        Schema::create('user_compare', function (Blueprint $table) {
             $table->unsignedBigInteger('property_id')->nullable();
             $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
-            $table->string('path');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('property_images');
+        Schema::dropIfExists('user_compare');
     }
 };

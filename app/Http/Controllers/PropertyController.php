@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddPropertyRequest;
+use App\Http\Requests\PropertyImageRequest;
 use App\Http\Requests\SearchPropertyRequest;
 use App\Models\Feature;
 use App\Models\Property;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\UserFavorites;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
@@ -49,7 +51,11 @@ class PropertyController extends Controller
             ->get();
 
         $statuses = self::STATUSES;
-        return view('properties.index', compact('properties', 'statuses'));
+
+        $favoritePropertyIds = UserFavorites::where('user_id', Auth::guard('user')->user()->id)
+            ->pluck('property_id')
+            ->all();
+        return view('properties.index', compact('properties', 'statuses', 'favoritePropertyIds'));
     }
 
     /**
@@ -100,17 +106,11 @@ class PropertyController extends Controller
         }
 
         $imgIds = explode(",", $request->imageIds);
-        foreach ($imgIds as $id) {
-            $image = PropertyImage::find($id);
-
-            if ($image) {
-                $image->update(['property_id' => $property->id]);
-            }
-        }
+        PropertyImage::whereIn('id', $imgIds)->whereNull('property_id')->update(['property_id' => $property->id]);
         return redirect()->back()->with('success', 'Property added successfully');
     }
 
-    public function uploadPropertyImage(Request $request)
+    public function uploadPropertyImage(PropertyImageRequest $request)
     {
         $imageIds = [];
 
@@ -129,7 +129,7 @@ class PropertyController extends Controller
 
     public function getUserProperties()
     {
-        $properties = Property::where('user_id', Auth::guard('user')->user()->id)->get();
+        $properties = Auth::guard('user')->user()->properties()->get();
         $statuses = self::STATUSES;
         return view('user.properties', compact('properties', 'statuses'));
     }
@@ -139,9 +139,13 @@ class PropertyController extends Controller
      */
     public function show(string $id)
     {
+
         $property = Property::where('id', $id)->first();
         $statuses = self::STATUSES;
-        return view('properties.show', compact('property', 'statuses'));
+        $favoritePropertyIds = UserFavorites::where('user_id', Auth::guard('user')->user()->id)
+            ->pluck('property_id')
+            ->all();
+        return view('properties.show', compact('property', 'statuses', 'favoritePropertyIds'));
     }
 
     /**
@@ -149,17 +153,18 @@ class PropertyController extends Controller
      */
     public function edit(string $id)
     {
-        $property = Property::where('id', $id)->first();
+        $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
         $statuses = self::STATUSES;
         $features = Feature::all();
-        return view('properties.form', compact('property', 'features', 'statuses'));    }
+        $imageIds = implode(',', $property->images->pluck('id')->toArray());
+        return view('properties.form', compact('property', 'features', 'statuses', 'imageIds'));    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(AddPropertyRequest $request, string $id)
     {
-        $property = Property::findOrFail($id);
+        $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
         $property->fill($request->except(['_token', '_method', 'file', 'address', 'city', 'state', 'zip_code', 'features', 'user_name', 'user_email', 'user_phone', 'imageIds']));
 
         if ($property->address) {
@@ -173,13 +178,7 @@ class PropertyController extends Controller
 
         if ($request->has('imageIds')) {
             $imgIds = explode(",", $request->imageIds);
-            foreach ($imgIds as $id) {
-                $image = PropertyImage::find($id);
-
-                if ($image) {
-                    $image->update(['property_id' => $property->id]);
-                }
-            }
+            PropertyImage::whereIn('id', $imgIds)->whereNull('property_id')->update(['property_id' => $property->id]);
         }
 
         $property->save();
@@ -191,7 +190,7 @@ class PropertyController extends Controller
      */
     public function destroy(string $id)
     {
-        $property = Property::findOrFail($id);
+        $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
 
         if ($property->address) {
             $property->address->delete();
@@ -215,47 +214,36 @@ class PropertyController extends Controller
         $allFeatures = Feature::all();
 
         if ($request->isMethod('post')) {
-            $status = $request->status;
-            $type = $request->type;
-            $minArea = $request->min_area;
-            $maxArea = $request->max_area;
-            $minPrice = $request->min_price;
-            $maxPrice = $request->max_price;
-            $age = $request->age;
-            $rooms = $request->rooms;
-            $beds = $request->bedrooms;
-            $baths = $request->bathrooms;
-
-            $properties->where(function($query) use ($status, $type, $minArea, $maxArea, $minPrice, $maxPrice, $age, $rooms, $beds, $baths) {
-                if ($status != -1) {
-                    $query->where('status', $status);
+            $properties->where(function($query) use ($request) {
+                if ($request->status != -1) {
+                    $query->where('status', $request->status);
                 }
-                if ($type != -1) {
-                    $query->where('type', $type);
+                if ($request->type != -1) {
+                    $query->where('type', $request->type);
                 }
-                if (!empty($minArea)) {
-                    $query->where('area', '>=', $minArea);
+                if (!empty($request->minArea)) {
+                    $query->where('area', '>=', $request->minArea);
                 }
-                if (!empty($maxArea)) {
-                    $query->where('area', '<=', $maxArea);
+                if (!empty($request->maxArea)) {
+                    $query->where('area', '<=', $request->maxArea);
                 }
-                if (!empty($minPrice)) {
-                    $query->where('price', '>=', $minPrice);
+                if (!empty($request->minPrice)) {
+                    $query->where('price', '>=', $request->minPrice);
                 }
-                if (!empty($maxPrice)) {
-                    $query->where('price', '<=', $maxPrice);
+                if (!empty($request->maxPrice)) {
+                    $query->where('price', '<=', $request->maxPrice);
                 }
-                if (!empty($age)) {
-                    $query->where('building_age', '<=', $age);
+                if (!empty($request->age)) {
+                    $query->where('building_age', '<=', $request->age);
                 }
-                if (!empty($rooms)) {
-                    $query->where('rooms', '=', $rooms);
+                if (!empty($request->rooms)) {
+                    $query->where('rooms', '=', $request->rooms);
                 }
-                if (!empty($beds)) {
-                    $query->where('bedrooms', '=', $beds);
+                if (!empty($request->beds)) {
+                    $query->where('bedrooms', '=', $request->beds);
                 }
-                if (!empty($baths)) {
-                    $query->where('bathrooms', '=', $baths);
+                if (!empty($request->baths)) {
+                    $query->where('bathrooms', '=', $request->baths);
                 }
 
             });
@@ -277,7 +265,7 @@ class PropertyController extends Controller
 
         }
 
-        $properties = $properties->get();
+        $properties = Property::paginate(2);
         return view('search', compact('properties', 'statuses', 'allFeatures'));
     }
 }

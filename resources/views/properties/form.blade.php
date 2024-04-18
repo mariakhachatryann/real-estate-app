@@ -15,35 +15,27 @@
 
     <div class="container">
         <div class="row">
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
             <div class="col-md-12">
-                <form
-                    action="{{ isset($property) ? route('properties.update', $property->id) : route('properties.store') }}"
+                <form action="{{ isset($property) ? route('properties.update', $property->id) : route('properties.store') }}"
                     method="post" enctype="multipart/form-data" class="submit-page">
                     @if(isset($property))
                         @method('PUT')
                     @endif
                     @csrf
 
-                    <div class="notification notice large margin-bottom-55">
-                        <h4>Don't Have an Account?</h4>
-                        <p>If you don't have an account you can create one by entering your email address in contact
-                            details section. A password will be automatically emailed to you.</p>
-                    </div>
+                    @if (session('success'))
+                        <div class="alert alert-success" style="margin-bottom: 20px;">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @guest('user')
+                        <div class="notification notice large margin-bottom-55">
+                            <h4>Don't Have an Account?</h4>
+                            <p>If you don't have an account you can create one by entering your email address in contact
+                                details section. A password will be automatically emailed to you.</p>
+                        </div>
+                    @endguest
 
                     <!-- Section -->
                     <h3>Basic Information</h3>
@@ -51,10 +43,12 @@
 
                         <!-- Title -->
                         <div class="form">
-                            <h5>Property Title <i class="tip"
-                                                  data-tip-content="Type title that will also contains an unique feature of your property (e.g. renovated, air contidioned)"></i>
+                            <h5>Property Title <i class="tip" data-tip-content="Type title that will also contains an unique feature of your property (e.g. renovated, air contidioned)"></i>
                             </h5>
                             <input name="title" class="search-field" type="text" value="{{ $property->title ?? '' }}"/>
+                            @error('title')
+                                <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Row -->
@@ -74,6 +68,9 @@
                                         Rent
                                     </option>
                                 </select>
+                                @error('status')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Type -->
@@ -97,6 +94,9 @@
                                         Lot
                                     </option>
                                 </select>
+                                @error('type')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
 
                             </div>
 
@@ -115,6 +115,9 @@
                                 <div class="select-input disabled-first-option">
                                     <input name="price" value="{{ $property->price ?? '' }}" type="text"
                                            data-unit="USD">
+                                    @error('price')
+                                        <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -124,6 +127,9 @@
                                 <div class="select-input disabled-first-option">
                                     <input name="area" type="text" value="{{ $property->area ?? '' }}"
                                            data-unit="Sq Ft">
+                                    @error('area')
+                                        <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -152,7 +158,9 @@
                                         More than 5
                                     </option>
                                 </select>
-
+                                @error('rooms')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>
@@ -164,8 +172,7 @@
 
                     <!-- Section -->
                     <h3>Gallery</h3>
-                    <div class="submit-section dropzone" id="galleryDropzone" action="{{ route('fileUpload') }}"
-                         data-dropzone>
+                    <div class="submit-section dropzone" id="galleryDropzone" action="{{ route('fileUpload') }}" data-dropzone>
                         <div class="fallback">
                             <input name="file" type="file" multiple/>
                         </div>
@@ -173,16 +180,18 @@
                             @foreach($property->images as $image)
                                 <div class="dz-preview dz-image-preview">
                                     <div class="dz-image">
-                                        <img src="{{ asset('storage/' . $image->path) }}" alt="Uploaded Image"
-                                             class="dz-image">
+                                        <img src="{{ asset('storage/' . $image->path) }}" alt="Uploaded Image" class="dz-image">
                                     </div>
                                     <button class="dz-remove" data-image-id="{{ $image->id }}">Remove</button>
                                 </div>
                             @endforeach
                         @endif
                     </div>
+                    @error('imageIds')
+                        <p style="color: red; margin-top: 5px;">Image is required</p>
+                    @enderror
 
-                    <input id="images_ids" type="hidden" name="imageIds">
+                    <input id="images_ids" value="{{ $imageIds ?? null }}" type="hidden" name="imageIds">
                     <!-- Section / End -->
 
                     <!-- Section -->
@@ -196,24 +205,36 @@
                             <div class="col-md-6">
                                 <h5>Address</h5>
                                 <input value="{{ $property->address->address ?? '' }}" name="address" type="text">
+                                @error('address')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- City -->
                             <div class="col-md-6">
                                 <h5>City</h5>
                                 <input value="{{ $property->address->city ?? '' }}" name="city" type="text">
+                                @error('city')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- City -->
                             <div class="col-md-6">
                                 <h5>State</h5>
                                 <input value="{{ $property->address->state ?? '' }}" name="state" type="text">
+                                @error('city')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Zip-Code -->
                             <div class="col-md-6">
                                 <h5>Zip-Code</h5>
                                 <input value="{{ $property->address->zip_code ?? '' }}" name="zip_code" type="text">
+                                @error('zip_code')
+                                    <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>
@@ -232,6 +253,9 @@
                             <h5>Description</h5>
                             <textarea name="description" class="WYSIWYG" cols="40" rows="3" id="summary"
                                       spellcheck="true">{{ $property->description ?? '' }}</textarea>
+                            @error('description')
+                                <p style="color: red; margin-top: 5px;">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Row -->
@@ -336,11 +360,15 @@
                                     <label for="{{$feature->id}}">{{ $feature->name }}</label>
 
                                     @auth('admin')
-                                    <a id={{$feature->id}} class="edit-feature" style="margin-right: 10px; color: green; cursor: pointer"><i class="fa fa-pencil"></i>
-                                        Edit</a>
-                                    <a class="delete-feature" style="color: red; cursor: pointer;"><i class="fa fa-remove"></i> Delete</a>
+                                        <a id={{$feature->id}} class="edit-feature"
+                                           style="margin-right: 10px; color: green; cursor: pointer"><i
+                                                class="fa fa-pencil"></i>
+                                            Edit</a>
+                                        <a class="delete-feature" style="color: red; cursor: pointer;"><i
+                                                class="fa fa-remove"></i> Delete</a>
 
-                                    <input id="{{$feature->id}}" class="edit-input" type="text" style="display: none">
+                                        <input id="{{$feature->id}}" class="edit-input" type="text"
+                                               style="display: none">
                                     @endauth
                                 </div>
                             @endforeach
@@ -348,7 +376,8 @@
                         @auth('admin')
                             <div class="form-group">
                                 <label for="newFeature">New Feature</label>
-                                <input type="text" class="form-control" id="newFeature" placeholder="Enter new feature name">
+                                <input type="text" class="form-control" id="newFeature"
+                                       placeholder="Enter new feature name">
                             </div>
                             <button id="addFeatureBtn" class="btn btn-primary">Add Feature</button>
                         @endauth

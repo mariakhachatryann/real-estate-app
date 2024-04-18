@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -73,19 +74,14 @@ class UserController extends Controller
         ]);
     }
 
-
-    public function changePassword(Request $request)
+    public function changePasswordView()
     {
-        if (!$request->isMethod('post')) {
-            return view('user.changePass');
-        }
+        return view('user.changePass');
+    }
 
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:12|different:current_password',
-            'confirm_password' => 'required|same:new_password',
-        ]);
 
+    public function changePassword(ChangePasswordRequest $request)
+    {
         $user = Auth::guard('user')->user();
 
         if (!Hash::check($request->current_password, $user->password)) {

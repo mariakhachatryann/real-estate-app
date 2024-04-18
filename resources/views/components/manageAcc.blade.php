@@ -7,7 +7,7 @@
                 <li class="sub-nav-title">Manage Account</li>
                 <li><a href="{{ route('myProfile') }}" class="current"><i class="sl sl-icon-user"></i> My Profile</a>
                 </li>
-                <li><a href="my-bookmarks.html"><i class="sl sl-icon-star"></i> Bookmarked Listings</a></li>
+                <li><a href="{{ route('favorites') }}"><i class="sl sl-icon-star"></i> Favorite Listings</a></li>
             </ul>
 
             <ul class="my-account-nav">
@@ -17,7 +17,7 @@
             </ul>
 
             <ul class="my-account-nav">
-                <li><a href="{{ route('changePassword') }}"><i class="sl sl-icon-lock"></i> Change Password</a></li>
+                <li><a href="{{ route('changePasswordView') }}"><i class="sl sl-icon-lock"></i> Change Password</a></li>
                 <form action="{{ route('logout') }}" method="post">
                     @csrf
                     <li>

@@ -5,6 +5,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="main-search-container">
+                            <input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
                             <h2>Find Your Dream Home</h2>
                             <form class="main-search-form">
                                 <div class="search-type">
@@ -134,9 +135,11 @@
                                         <span>For {{ $statuses[$property->status] }}</span>
                                     </div>
                                     <div class="listing-img-content">
-                                        <span class="listing-price">${{ $property->price }} <i>$520 / sq ft</i></span>
-                                        <span class="like-icon with-tip" data-tip-content="Add to Bookmarks"></span>
-                                        <span class="compare-button with-tip" data-tip-content="Add to Compare"></span>
+                                        <span class="listing-price">${{ number_format($property->price) }} <i>$520 / sq ft</i></span>
+                                        @auth('user')
+                                            <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
+                                            <span class="compare-button with-tip" data-tip-content="Add to Compare"></span>
+                                        @endauth
                                     </div>
                                     <div class="listing-carousel">
                                         @foreach( $property->images as $img )
@@ -161,8 +164,6 @@
                                     <div class="listing-footer">
                                         <a href="#"><i class="fa fa-user"></i> {{ $property->creator->username }}</a>
                                         <span><i class="fa fa-calendar-o"></i> {{ $property->created_at_ago }}</span>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -170,13 +171,8 @@
                     @endforeach
                 </div>
             </div>
-            <!-- Carousel / End -->
-
         </div>
     </div>
-
-
-    <!-- Fullwidth Section -->
     <section class="fullwidth margin-top-105" data-background-color="#f7f7f7">
 
         <!-- Box Headline -->
@@ -261,10 +257,6 @@
             </div>
         </div>
     </section>
-    <!-- Fullwidth Section / End -->
-
-
-    <!-- Container -->
     <div class="container">
         <div class="row">
 
@@ -333,10 +325,6 @@
 
         </div>
     </div>
-    <!-- Container / End -->
-
-
-    <!-- Fullwidth Section -->
     <section class="fullwidth margin-top-95 margin-bottom-0">
 
         <!-- Box Headline -->
@@ -425,6 +413,5 @@
             <h2 class="flip-hidden">Browse Properties <i class="sl sl-icon-arrow-right"></i></h2>
         </div>
     </a>
-
 </x-layout>
-
+<script src="{{ asset('scripts/fav.js') }}"></script>

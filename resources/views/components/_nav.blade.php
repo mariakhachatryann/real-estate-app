@@ -261,7 +261,7 @@
                         <div class="user-name"><span></span>Hi, {{ Auth::guard('user')->user()->username }}!</div>
                         <ul>
                             <li><a href="{{ route('myProfile') }}"><i class="sl sl-icon-user"></i> My Profile</a></li>
-                            <li><a href="my-bookmarks.html"><i class="sl sl-icon-star"></i> Bookmarks</a></li>
+                            <li><a href="{{ route('favorites') }}"><i class="sl sl-icon-star"></i> Favorites</a></li>
                             <li><a href="{{ route('myProperties') }}"><i class="sl sl-icon-docs"></i> My Properties</a></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="post">

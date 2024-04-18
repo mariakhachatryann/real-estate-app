@@ -39,6 +39,16 @@
                         <p>{{ session('success') }}</p>
                     @endif
 
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                     <form method="post" action="{{ route('update') }}" class="col-md-8 my-profile">
                         @csrf
                         <h4 class="margin-top-0 margin-bottom-30">My Account</h4>
@@ -73,7 +83,6 @@
 
                         <label><i class="fa fa-linkedin"></i> Linkedin</label>
                         <input name="linkedin" value="{{ $user->linkedin }}" type="text">
-
 
                         <button type="submit" class="button margin-top-20 margin-bottom-20">Save Changes</button>
                     </form>

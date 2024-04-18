@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginAdminRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginAdminRequest $request)
     {
         $credentials = $request->only('name', 'password');
 

@@ -19,7 +19,7 @@
                         </div>
 
                         <div class="property-pricing">
-                            <div class="property-price">${{ $property->price }}</div>
+                            <div class="property-price">${{ number_format($property->price) }}</div>
                             <div class="sub-price">$770 / sq ft</div>
                         </div>
 
@@ -65,7 +65,7 @@
                         <!-- Main Features -->
                         <ul class="property-main-features">
                             <li>Area <span>{{ $property->area }}</span></li>
-                            <li>Rooms <span>{{ $property->rooms }}</span></li>
+                            <li>Rooms <span>{{ $property->rooms == "-1" ? '5+' : $property->rooms}}</span></li>
                             <li>Bedrooms <span>{{ $property->bedrooms }}</span></li>
                             <li>Bathrooms <span>{{ $property->bathrooms }}</span></li>
                         </ul>
@@ -93,9 +93,6 @@
                                 <li>{{ $feature->name }}</li>
                             @endforeach
                         </ul>
-
-
-
 
                         <!-- Location -->
                         <h3 class="desc-headline no-border" id="location">Location</h3>
@@ -272,7 +269,7 @@
                         <!-- Widget -->
                         <div class="widget margin-bottom-30">
                             <button class="widget-button with-tip" data-tip-content="Print"><i class="sl sl-icon-printer"></i></button>
-                            <button class="widget-button with-tip" data-tip-content="Add to Bookmarks"><i class="fa fa-star-o"></i></button>
+                            <button class="widget-button with-tip with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"><i class="fa fa-star-o"></i></button>
                             <button class="widget-button with-tip compare-widget-button" data-tip-content="Add to Compare"><i class="icon-compare"></i></button>
                             <div class="clearfix"></div>
                         </div>
@@ -289,6 +286,7 @@
                                     <div class="col-lg-12">
                                         <input type="text" id="date-picker" placeholder="Date" readonly="readonly">
                                     </div>
+                                    <input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
 
                                     <!-- Panel Dropdown -->
                                     <div class="col-lg-12">
@@ -384,8 +382,8 @@
                                 <div class="agent-title">
                                     <div class="agent-photo"><img src="images/agent-avatar.jpg" alt="" /></div>
                                     <div class="agent-details">
-                                        <h4><a href="#">Jennie Wilson</a></h4>
-                                        <span><i class="sl sl-icon-call-in"></i>(123) 123-456</span>
+                                        <h4><a href="#">{{ $property->creator->username }}</a></h4>
+                                        <span><i class="sl sl-icon-call-in"></i>{{ $property->creator->phone }}</span>
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
@@ -540,3 +538,4 @@
             </div>
         </div>
 </x-layout>
+<script src="{{ asset('scripts/fav.js') }}"></script>

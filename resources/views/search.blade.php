@@ -314,7 +314,7 @@
                                 </div>
 
                                 <div class="listing-img-content">
-                                    <span class="listing-price">${{ $property->price }} <i>$520 / sq ft</i></span>
+                                    <span class="listing-price">${{ number_format($property->price) }} <i>$520 / sq ft</i></span>
                                     <span class="like-icon with-tip" data-tip-content="Add to Bookmarks"></span>
                                     <span class="compare-button with-tip" data-tip-content="Add to Compare"></span>
                                 </div>
@@ -366,23 +366,25 @@
                 <div class="pagination-container margin-top-20">
                     <nav class="pagination">
                         <ul>
-                            <li><a href="#" class="current-page">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li class="blank">...</li>
-                            <li><a href="#">22</a></li>
+                            @foreach ($properties->links()->elements[0] as $page => $url)
+                                <li><a href="{{ $url }}" class="{{ $page == $properties->currentPage() ? 'current-page' : '' }}">{{ $page }}</a></li>
+                            @endforeach
+
                         </ul>
                     </nav>
 
                     <nav class="pagination-next-prev">
                         <ul>
-                            <li><a href="#" class="prev">Previous</a></li>
-                            <li><a href="#" class="next">Next</a></li>
+                            @if ($properties->previousPageUrl())
+                                <li><a href="{{ $properties->previousPageUrl() }}" class="prev">Previous</a></li>
+                            @endif
+
+                            @if ($properties->nextPageUrl())
+                                <li><a href="{{ $properties->nextPageUrl() }}" class="next">Next</a></li>
+                            @endif
                         </ul>
                     </nav>
                 </div>
-                <!-- Pagination / End -->
-
             </div>
         </div>
     </div>

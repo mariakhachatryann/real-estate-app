@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->integer('status');
             $table->integer('type');
+            $table->integer('price');
             $table->double('area');
             $table->integer('rooms');
             $table->string('description');
