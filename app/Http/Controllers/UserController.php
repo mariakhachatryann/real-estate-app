@@ -5,14 +5,19 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\Property;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
+use App\Http\Requests\AgentMessageRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Services\UserService;
+use App\Models\User;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
     public function myProfile()
     {
         $user = Auth::guard('user')->user();
@@ -26,12 +31,8 @@ class UserController extends Controller
 
     public function register(RegisterUserRequest $request)
     {
-        $user = User::create([
-            'username' => $request->validated()['username_reg'],
-            'email' => $request->validated()['email_reg'],
-            'password' => Hash::make($request->validated()['password_reg']),
-        ]);
-
+        $userData = $request->validated();
+        $user = $this->userService->register($userData);
         Auth::guard('user')->login($user);
         return redirect()->route('myProfile');
     }
@@ -40,7 +41,7 @@ class UserController extends Controller
     {
         $credentials = $request->only('username', 'password');
 
-        if (Auth::guard('user')->attempt($credentials)) {
+        if ($this->userService->login($credentials)) {
             return redirect()->route('myProfile');
         } else {
             return back()->withErrors(['email' => 'Invalid credentials']);
@@ -49,7 +50,7 @@ class UserController extends Controller
 
     public function logout()
     {
-        Auth::guard('user')->logout();
+        $this->userService->logout();$this->userService->logout();
         return redirect()->route('loginView');
     }
 
@@ -59,14 +60,7 @@ class UserController extends Controller
         $validatedData = $request->validated();
         $user = Auth::guard('user')->user();
 
-        if ($user->email !== $validatedData['email']) {
-            $request->validate([
-                'email' => 'required|string|email|unique:users,email,' . $user->id,
-            ]);
-        }
-
-        $user->update($validatedData);
-        $user->save();
+        $user = $this->userService->updateInfo($user, $validatedData);
 
         return redirect()->route('myProfile')->with([
             'success' => 'Profile updated successfully',
@@ -79,22 +73,27 @@ class UserController extends Controller
         return view('user.changePass');
     }
 
-
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = Auth::guard('user')->user();
+        $currentPassword = $request->current_password;
+        $newPassword = $request->new_password;
+        $confirmPassword = $request->confirm_password;
 
-        if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->back()->with('error', 'The current password is incorrect.');
+        $result = $this->userService->changePassword($user, $currentPassword, $newPassword, $confirmPassword);
+
+        if ($result['success']) {
+            return redirect()->back()->with('success', $result['message']);
+        } else {
+            return redirect()->back()->with('error', $result['message']);
         }
+    }
 
-        if ($request->new_password != $request->confirm_password) {
-            return redirect()->back()->with('error', 'Passwords dont\'t match.');
-        }
-        $user->password = Hash::make($request->new_password);
-        $user->save();
+    public function messageAgent(AgentMessageRequest $request, $id)
+    {
+        $agentDetails = User::findOrFail($id);
+        $this->userService->messageToAgent($request->email, $request->phone, $request->message, $agentDetails);
 
-        return redirect()->back()->with('success', 'Password changed successfully.');
-
+        return redirect()->back()->with('success', 'Message sent successfully!');
     }
 }

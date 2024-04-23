@@ -138,7 +138,7 @@
                                         <span class="listing-price">${{ number_format($property->price) }} <i>$520 / sq ft</i></span>
                                         @auth('user')
                                             <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
-                                            <span class="compare-button with-tip" data-tip-content="Add to Compare"></span>
+                                            <span class="compare-button with-tip" onclick="compare({{ $property->id }}, false)" data-tip-content="Add to Compare" id="compare{{ $property->id }}"></span>
                                         @endauth
                                     </div>
                                     <div class="listing-carousel">
@@ -415,3 +415,7 @@
     </a>
 </x-layout>
 <script src="{{ asset('scripts/fav.js') }}"></script>
+<script src="{{ asset('scripts/compare.js') }}"></script>
+
+
+

@@ -95,11 +95,11 @@
                         </ul>
 
                         <!-- Location -->
-                        <h3 class="desc-headline no-border" id="location">Location</h3>
-                        <div id="propertyMap-container">
-                            <div id="propertyMap" data-latitude="40.7427837" data-longitude="-73.11445617675781"></div>
-                            <a href="#" id="streetView">Street View</a>
-                        </div>
+{{--                        <h3 class="desc-headline no-border" id="location">Location</h3>--}}
+{{--                        <div id="propertyMap-container">--}}
+{{--                            <div id="propertyMap" data-latitude="40.7427837" data-longitude="-73.11445617675781"></div>--}}
+{{--                            <a href="#" id="streetView">Street View</a>--}}
+{{--                        </div>--}}
 
 
                         <!-- Similar Listings Container -->
@@ -110,152 +110,54 @@
                         <div class="layout-switcher hidden"><a href="#" class="list"><i class="fa fa-th-list"></i></a></div>
                         <div class="listings-container list-layout">
 
-                            <!-- Listing Item -->
-                            <div class="listing-item">
+                            @foreach($similarProperties as $property)
+                                <div class="listing-item">
 
-                                <a href="#" class="listing-img-container">
+                                    <a href="{{ route('properties.show', $property->id) }}" class="listing-img-container">
 
-                                    <div class="listing-badges">
-                                        <span>For Rent</span>
-                                    </div>
+                                        <div class="listing-badges">
+                                            <span>For {{ $statuses[$property->status] }}</span>
+                                        </div>
 
-                                    <div class="listing-img-content">
-                                        <span class="listing-price">$1700 <i>monthly</i></span>
-                                        <span class="like-icon"></span>
-                                    </div>
+                                        <div class="listing-img-content">
+                                            <span class="listing-price">$ {{ $property->price }} <i>monthly</i></span>
+                                            <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
+                                        </div>
 
-                                    <img src="images/listing-03.jpg" alt="">
+                                        <img src="{{ asset('storage/' . $property->images[0]->path) }}" alt="">
 
-                                </a>
+                                    </a>
 
-                                <div class="listing-content">
+                                    <div class="listing-content">
 
-                                    <div class="listing-title">
-                                        <h4><a href="#">Meridian Villas</a></h4>
-                                        <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom" class="listing-address popup-gmaps">
-                                            <i class="fa fa-map-marker"></i>
-                                            778 Country St. Panama City, FL
-                                        </a>
+                                        <div class="listing-title">
+                                            <h4><a href="#">{{ $property->title }}</a></h4>
+                                            <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom" class="listing-address popup-gmaps">
+                                                <i class="fa fa-map-marker"></i>
+                                                {{ $property->address->address }}
+                                            </a>
 
-                                        <a href="#" class="details button border">Details</a>
-                                    </div>
+                                            <a href="{{ route('properties.show', $property->id) }}" class="details button border">Details</a>
+                                        </div>
 
-                                    <ul class="listing-details">
-                                        <li>1450 sq ft</li>
-                                        <li>1 Bedroom</li>
-                                        <li>2 Rooms</li>
-                                        <li>2 Rooms</li>
-                                    </ul>
+                                        <ul class="listing-details">
+                                            <li>{{ $property->area }} sq ft</li>
+                                            <li>{{ $property->rooms }} Rooms</li>
+                                            <li>{{ $property->bathrooms }} Bathrooms</li>
+                                            <li>{{ $property->bedrooms }} Bedrooms</li>
+                                        </ul>
 
-                                    <div class="listing-footer">
-                                        <a href="#"><i class="fa fa-user"></i> Chester Miller</a>
-                                        <span><i class="fa fa-calendar-o"></i> 4 days ago</span>
-                                    </div>
+                                        <div class="listing-footer">
+                                            <a href="#"><i class="fa fa-user"></i> {{ $property->creator->username }}</a>
+                                            <span><i class="fa fa-calendar-o"></i> 4 days ago</span>
+                                        </div>
 
-                                </div>
-                                <!-- Listing Item / End -->
-
-                            </div>
-                            <!-- Listing Item / End -->
-
-
-                            <!-- Listing Item -->
-                            <div class="listing-item">
-
-                                <a href="#" class="listing-img-container">
-
-                                    <div class="listing-badges">
-                                        <span>For Sale</span>
-                                    </div>
-
-                                    <div class="listing-img-content">
-                                        <span class="listing-price">$420,000 <i>$770 / sq ft</i></span>
-                                        <span class="like-icon"></span>
-                                    </div>
-
-                                    <div><img src="images/listing-04.jpg" alt=""></div>
-
-                                </a>
-
-                                <div class="listing-content">
-
-                                    <div class="listing-title">
-                                        <h4><a href="#">Selway Apartments</a></h4>
-                                        <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom" class="listing-address popup-gmaps">
-                                            <i class="fa fa-map-marker"></i>
-                                            33 William St. Northbrook, IL
-                                        </a>
-
-                                        <a href="#" class="details button border">Details</a>
-                                    </div>
-
-                                    <ul class="listing-details">
-                                        <li>540 sq ft</li>
-                                        <li>1 Bedroom</li>
-                                        <li>3 Rooms</li>
-                                        <li>2 Bathroom</li>
-                                    </ul>
-
-                                    <div class="listing-footer">
-                                        <a href="#"><i class="fa fa-user"></i> Kristen Berry</a>
-                                        <span><i class="fa fa-calendar-o"></i> 3 days ago</span>
                                     </div>
 
                                 </div>
-                                <!-- Listing Item / End -->
-
-                            </div>
-                            <!-- Listing Item / End -->
-
-
-                            <!-- Listing Item -->
-                            <div class="listing-item">
-
-                                <a href="#" class="listing-img-container">
-                                    <div class="listing-badges">
-                                        <span>For Sale</span>
-                                    </div>
-
-                                    <div class="listing-img-content">
-                                        <span class="listing-price">$535,000 <i>$640 / sq ft</i></span>
-                                        <span class="like-icon"></span>
-                                    </div>
-
-                                    <img src="images/listing-05.jpg" alt="">
-                                </a>
-
-                                <div class="listing-content">
-
-                                    <div class="listing-title">
-                                        <h4><a href="#">Oak Tree Villas</a></h4>
-                                        <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom" class="listing-address popup-gmaps">
-                                            <i class="fa fa-map-marker"></i>
-                                            71 Lower River Dr. Bronx, NY
-                                        </a>
-
-                                        <a href="#" class="details button border">Details</a>
-                                    </div>
-
-                                    <ul class="listing-details">
-                                        <li>350 sq ft</li>
-                                        <li>1 Bedroom</li>
-                                        <li>2 Rooms</li>
-                                        <li>1 Bathroom</li>
-                                    </ul>
-
-                                    <div class="listing-footer">
-                                        <a href="#"><i class="fa fa-user"></i> Mabel Gagnon</a>
-                                        <span><i class="fa fa-calendar-o"></i> 4 days ago</span>
-                                    </div>
-
-                                </div>
-                                <!-- Listing Item / End -->
-
-                            </div>
-                            <!-- Listing Item / End -->
+                            @endforeach
 
                         </div>
-                        <!-- Similar Listings Container / End -->
 
                     </div>
                 </div>
@@ -270,7 +172,7 @@
                         <div class="widget margin-bottom-30">
                             <button class="widget-button with-tip" data-tip-content="Print"><i class="sl sl-icon-printer"></i></button>
                             <button class="widget-button with-tip with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"><i class="fa fa-star-o"></i></button>
-                            <button class="widget-button with-tip compare-widget-button" data-tip-content="Add to Compare"><i class="icon-compare"></i></button>
+                            <button class="widget-button with-tip compare-widget-button" onclick="compare({{ $property->id }}, true)" id="compare{{ $property->id }}" data-tip-content="Add to Compare"><i class="icon-compare"></i></button>
                             <div class="clearfix"></div>
                         </div>
                         <!-- Widget / End -->
@@ -380,7 +282,7 @@
                             <!-- Agent Widget -->
                             <div class="agent-widget">
                                 <div class="agent-title">
-                                    <div class="agent-photo"><img src="images/agent-avatar.jpg" alt="" /></div>
+                                    <div class="agent-photo"><img src="../images/no-image.jpg" alt="" /></div>
                                     <div class="agent-details">
                                         <h4><a href="#">{{ $property->creator->username }}</a></h4>
                                         <span><i class="sl sl-icon-call-in"></i>{{ $property->creator->phone }}</span>
@@ -388,10 +290,20 @@
                                     <div class="clearfix"></div>
                                 </div>
 
-                                <input type="text" placeholder="Your Email" pattern="^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$">
-                                <input type="text" placeholder="Your Phone">
-                                <textarea>I'm interested in this property [ID 123456] and I'd like to know more details.</textarea>
-                                <button class="button fullwidth margin-top-5">Send Message</button>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+
+                                <form action="{{ route('agentMessage', $property->creator->id) }}" method="post">
+                                    @csrf
+                                    <input type="text" name="email" placeholder="Your Email" pattern="^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$">
+                                    <input type="text" name="phone" placeholder="Your Phone">
+                                    <textarea name="message">I'm interested in this property [{{ $property->id }}] and I'd like to know more details.</textarea>
+                                    <button type="submit" class="button fullwidth margin-top-5">Send Message</button>
+                                </form>
+
                             </div>
                             <!-- Agent Widget / End -->
 
@@ -440,92 +352,32 @@
                             <h3 class="margin-bottom-35">Featured Properties</h3>
 
                             <div class="listing-carousel outer">
-                                <!-- Item -->
-                                <div class="item">
-                                    <div class="listing-item compact">
+                                @foreach($properties as $prop)
+                                    <div class="item">
+                                        <div class="listing-item compact">
+                                            <a href="#" class="listing-img-container">
+                                                <div class="listing-badges">
+                                                    <span class="featured">Featured</span>
+                                                    <span>For {{ $statuses[$prop->status] }}</span>
+                                                </div>
+                                                <div class="listing-img-content">
+                                                    <span class="listing-compact-title">{{ $prop->title }} <i>${{ number_format($prop->price) }}</i></span>
+                                                    <ul class="listing-hidden-content">
+                                                        <li>Area <span>{{ $prop->area }} sq ft</span></li>
+                                                        <li>Rooms <span>{{ $prop->rooms }}</span></li>
+                                                        <li>Beds <span>{{ $prop->bedrooms }}</span></li>
+                                                        <li>Baths <span>{{ $prop->bathrooms }}</span></li>
+                                                    </ul>
+                                                </div>
 
-                                        <a href="#" class="listing-img-container">
+                                                <img src="{{ asset('storage/' . $prop->images[0]->path) }}" alt="">
+                                            </a>
 
-                                            <div class="listing-badges">
-                                                <span class="featured">Featured</span>
-                                                <span>For Sale</span>
-                                            </div>
-
-                                            <div class="listing-img-content">
-                                                <span class="listing-compact-title">Eagle Apartments <i>$275,000</i></span>
-
-                                                <ul class="listing-hidden-content">
-                                                    <li>Area <span>530 sq ft</span></li>
-                                                    <li>Rooms <span>3</span></li>
-                                                    <li>Beds <span>1</span></li>
-                                                    <li>Baths <span>1</span></li>
-                                                </ul>
-                                            </div>
-
-                                            <img src="images/listing-01.jpg" alt="">
-                                        </a>
-
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Item / End -->
 
-                                <!-- Item -->
-                                <div class="item">
-                                    <div class="listing-item compact">
+                                @endforeach
 
-                                        <a href="#" class="listing-img-container">
-
-                                            <div class="listing-badges">
-                                                <span class="featured">Featured</span>
-                                                <span>For Sale</span>
-                                            </div>
-
-                                            <div class="listing-img-content">
-                                                <span class="listing-compact-title">Selway Apartments <i>$245,000</i></span>
-
-                                                <ul class="listing-hidden-content">
-                                                    <li>Area <span>530 sq ft</span></li>
-                                                    <li>Rooms <span>3</span></li>
-                                                    <li>Beds <span>1</span></li>
-                                                    <li>Baths <span>1</span></li>
-                                                </ul>
-                                            </div>
-
-                                            <img src="images/listing-02.jpg" alt="">
-                                        </a>
-
-                                    </div>
-                                </div>
-                                <!-- Item / End -->
-
-                                <!-- Item -->
-                                <div class="item">
-                                    <div class="listing-item compact">
-
-                                        <a href="#" class="listing-img-container">
-
-                                            <div class="listing-badges">
-                                                <span class="featured">Featured</span>
-                                                <span>For Sale</span>
-                                            </div>
-
-                                            <div class="listing-img-content">
-                                                <span class="listing-compact-title">Oak Tree Villas <i>$325,000</i></span>
-
-                                                <ul class="listing-hidden-content">
-                                                    <li>Area <span>530 sq ft</span></li>
-                                                    <li>Rooms <span>3</span></li>
-                                                    <li>Beds <span>1</span></li>
-                                                    <li>Baths <span>1</span></li>
-                                                </ul>
-                                            </div>
-
-                                            <img src="images/listing-03.jpg" alt="">
-                                        </a>
-
-                                    </div>
-                                </div>
-                                <!-- Item / End -->
                             </div>
 
                         </div>
@@ -539,3 +391,4 @@
         </div>
 </x-layout>
 <script src="{{ asset('scripts/fav.js') }}"></script>
+<script src="{{ asset('scripts/compare.js') }}"></script>

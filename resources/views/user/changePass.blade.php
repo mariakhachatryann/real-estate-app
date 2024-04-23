@@ -26,15 +26,21 @@
     ================================================== -->
     <div class="container">
         <div class="row">
-
-
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Widget -->
             @include('components.manageAcc')
 
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-md-6 my-profile">
-                        <form action="{{ route('changePassword') }}"  method="post">
+                        <form action="{{ route('changePassword') }}" method="post">
                             @csrf
 
                             <h4 class="margin-top-0 margin-bottom-30">Change Password</h4>
@@ -54,12 +60,7 @@
                     <div class="col-md-6">
                         <div class="notification notice">
                             <p>Your password should be at least 12 random characters long to be safe</p>
-                            @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
-                            @endif
-                            @if(session('error'))
-                                <div class="alert alert-danger">{{ session('error') }}</div>
-                            @endif
+
                         </div>
                     </div>
                 </div>

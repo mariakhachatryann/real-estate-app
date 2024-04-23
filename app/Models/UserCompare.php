@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class UserCompare extends Model
 {
     use HasFactory;
+    protected $table = 'user_compare';
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
 }

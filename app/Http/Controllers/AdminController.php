@@ -3,16 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginAdminRequest;
-use Illuminate\Http\Request;
+use App\Services\AdminService;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    protected $adminService;
+
+    public function __construct(AdminService $adminService)
+    {
+        $this->adminService = $adminService;
+    }
     public function login(LoginAdminRequest $request)
     {
         $credentials = $request->only('name', 'password');
 
-        if (Auth::guard('admin')->attempt($credentials)) {
+        if ($this->adminService->login($credentials)) {
             return redirect()->route("properties.index");
         } else {
             return back()->withErrors(['email' => 'Invalid credentials']);
@@ -21,7 +27,7 @@ class AdminController extends Controller
 
     public function logout()
     {
-        Auth::guard('admin')->logout();
+        $this->adminService->logout();
         return redirect()->route('loginView');
     }
 }

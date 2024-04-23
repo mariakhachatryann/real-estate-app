@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserFavorites::class);
     }
+
+    public function compare()
+    {
+        return $this->hasMany(UserCompare::class);
+    }
 }
