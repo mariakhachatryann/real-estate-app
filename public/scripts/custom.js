@@ -528,13 +528,47 @@ $(document).ready(function(){
 	});
 
     // Tooltips
-	$(".compare-button.with-tip, .like-icon.with-tip, .widget-button.with-tip").each(function() {
+	$(".compare-button.with-tip").each(function() {
 		$(this).on('click', function(e){
 	    	e.preventDefault();
 		});
 		var tipContent = $(this).attr('data-tip-content');
 		$(this).append('<div class="tip-content">'+ tipContent + '</div>');
 	});
+
+    $(".like-icon.with-tip").each(function () {
+        var $this = $(this);
+        var tipContent = $this.attr('data-tip-content');
+        $this.html('<div class="tip-content">' + tipContent + '</div>');
+
+        $this.on('click', function (e) {
+            e.preventDefault();
+            if ($this.hasClass('liked')) {
+                $this.attr('data-tip-content', 'Add to Bookmarks');
+            } else {
+                $this.attr('data-tip-content', 'Remove from Bookmarks');
+            }
+
+            var tipContent = $this.attr('data-tip-content');
+            $this.html('<div class="tip-content">' + tipContent + '</div>');
+        })
+    })
+
+    $(".widget-button.with-tip.bookmark").each(function () {
+        var $this = $(this);
+        $this.on('click', function (e) {
+            e.preventDefault();
+            if ($this.hasClass('liked')) {
+                $this.attr('data-tip-content', 'Add to Bookmarks');
+            } else {
+                $this.attr('data-tip-content', 'Remove from Bookmarks');
+            }
+
+            var tipContent = $this.attr('data-tip-content');
+            $this.html('<i class="fa fa-star-o"></i><div class="tip-content">' + tipContent + '</div>');
+        })
+    })
+
 
 	// Demo Purpose Trigger
 	$('.compare-button, .compare-widget-button').on('click', function(){

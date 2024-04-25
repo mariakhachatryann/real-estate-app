@@ -14,29 +14,26 @@
                 $compareProp = UserCompare::all();
             @endphp
             <div id="compareParent">
-
                 @auth('user')
-                    @if(empty(count($compareProp)))
-                        <p>Compare Properties is empty</p>
-                    @else
-                        @foreach($compareProp as $comp)
-                            <div class="listing-item compact">
-                                <a href="{{ route('properties.show', $comp->property->id) }}" class="listing-img-container">
-                                    <div class="remove-from-compare"><i class="fa fa-close"></i></div>
-                                    <div class="listing-img-content">
+                    <p class="empty-compare">Compare Properties is empty</p>
+                    @foreach($compareProp as $comp)
+                        <div class="listing-item compact">
+                            <a href="{{ route('properties.show', $comp->property->id) }}" class="listing-img-container">
+                                <div class="remove-from-compare"><i class="fa fa-close"></i></div>
+                                <div class="listing-img-content">
                                         <span
                                             class="listing-compact-title">{{ $comp->property->title }} <i>${{ number_format($comp->property->price) }}</i></span>
-                                    </div>
-                                    <img src="{{ asset('storage/' . $comp->property->images[0]->path) }}" alt="">
-                                </a>
+                                </div>
+                                <img src="{{ asset('storage/' . $comp->property->images[0]->path) }}" alt="">
+                            </a>
 
-                                <form id="remove-compare-{{$comp->property->id}}" action="{{ route('removeComparison', $comp->property->id) }}" method="post">
-                                    @csrf
-                                    @method('delete')
-                                </form>
-                            </div>
-                        @endforeach
-                    @endif
+                            <form id="remove-compare-{{$comp->property->id}}"
+                                  action="{{ route('removeComparison', $comp->property->id) }}" method="post">
+                                @csrf
+                                @method('delete')
+                            </form>
+                        </div>
+                    @endforeach
                 @endauth
             </div>
 
@@ -300,12 +297,3 @@
 
 </header>
 <div class="clearfix"></div>
-
-<script>
-    let removeBtn = document.querySelectorAll('.remove-from-compare');
-    removeBtn.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            btn.parentElement.nextElementSibling.submit();
-        })
-    })
-</script>

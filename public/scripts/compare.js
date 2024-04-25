@@ -1,6 +1,7 @@
 function compare(propertyId, pathCheck) {
     var csrfToken = $('#csrf-token').val();
     var imagePath = (pathCheck) ? '../storage/' : 'storage/';
+    var compText = $('.empty-compare');
 
     $.ajax({
         url: '/compare',
@@ -11,6 +12,7 @@ function compare(propertyId, pathCheck) {
         },
         success: function(response) {
             console.log(response);
+            compText.remove();
             var newPropertyHtml = `
                         <div class="listing-item compact">
                             <a  class="listing-img-container">
@@ -33,3 +35,10 @@ function compare(propertyId, pathCheck) {
         }
     });
 }
+
+$(document).ready(function() {
+    $('.remove-from-compare').on('click', function() {
+        $(this).parent().next().submit();
+        console.log($(this).parent().next())
+    });
+});

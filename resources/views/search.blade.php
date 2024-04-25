@@ -1,5 +1,5 @@
-
-<x-layout>
+@extends('components.layout')
+@section('layout')
     <!-- Search
     ================================================== -->
     <section class="search margin-bottom-50">
@@ -310,7 +310,7 @@
 
                                 <div class="listing-badges">
                                     <span class="featured">Featured</span>
-                                    <span>For {{ $statuses[$property->status] }}</span>
+                                    <span>For {{ \App\Models\Property::STATUSES[$property->status] }}</span>
                                 </div>
 
                                 <div class="listing-img-content">
@@ -388,5 +388,4 @@
             </div>
         </div>
     </div>
-
-</x-layout>
+@endsection

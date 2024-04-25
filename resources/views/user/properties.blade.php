@@ -1,6 +1,5 @@
-<x-layout>
-
-
+@extends('components.layout')
+@section('layout')
     <!-- Titlebar
     ================================================== -->
     <div id="titlebar">
@@ -50,7 +49,7 @@
                                 <div class="title">
                                     <h4><a href="/properties/{{$property->id}}">{{ $property->title }}</a></h4>
                                     <span>{{ $property->address->address }}</span>
-                                    <span class="table-property-price">For {{ $statuses[$property->status] }} / ${{ $property->price }}</span>
+                                    <span class="table-property-price">For {{ App\Models\Property::STATUSES[$property->status] }} / ${{ $property->price }}</span>
                                 </div>
                             </td>
                             <td class="expire-date">{{ $property->created_at->addMonth()->format('Y-m-d H:i:s') }}</td>
@@ -72,6 +71,4 @@
 
         </div>
     </div>
-
-
-</x-layout>
+@endsection

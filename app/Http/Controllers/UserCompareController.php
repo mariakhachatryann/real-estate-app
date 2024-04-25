@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompareRequest;
-use App\Models\Feature;
 use App\Services\UserCompareService;
-use App\Models\UserCompare;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserCompareController extends Controller
@@ -38,7 +35,7 @@ class UserCompareController extends Controller
         }
     }
 
-    public function remove($propertyId)
+    public function remove(string $propertyId)
     {
         $userId = Auth::guard('user')->user()->id;
         $this->userCompareService->removeComparison($userId, $propertyId);

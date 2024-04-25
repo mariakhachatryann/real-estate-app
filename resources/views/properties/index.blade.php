@@ -1,4 +1,5 @@
-<x-layout>
+@extends('components.layout')
+@section('layout')
     <div class="parallax" style="background-image: url('images/home-parallax.jpg'); background-size: cover">
         <div class="parallax-content">
             <div class="container">
@@ -132,12 +133,15 @@
                                 <a href="{{ route('properties.show', $property->id) }}" class="listing-img-container">
                                     <div class="listing-badges">
                                         <span class="featured">Featured</span>
-                                        <span>For {{ $statuses[$property->status] }}</span>
+                                        <span>For {{ \App\Models\Property::STATUSES[$property->status] }}</span>
                                     </div>
                                     <div class="listing-img-content">
                                         <span class="listing-price">${{ number_format($property->price) }} <i>$520 / sq ft</i></span>
                                         @auth('user')
-                                            <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
+                                            <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}"
+                                                  data-tip-content="{{ in_array($property->id, $favoritePropertyIds) ?  'Remove from Bookmarks' : ' Add to bookmarks' }} "
+                                                  onclick="addToFavorites({{ $property->id }}, this)"
+                                                  id="fav{{ $property->id }}"></span>
                                             <span class="compare-button with-tip" onclick="compare({{ $property->id }}, false)" data-tip-content="Add to Compare" id="compare{{ $property->id }}"></span>
                                         @endauth
                                     </div>
@@ -413,9 +417,9 @@
             <h2 class="flip-hidden">Browse Properties <i class="sl sl-icon-arrow-right"></i></h2>
         </div>
     </a>
-</x-layout>
-<script src="{{ asset('scripts/fav.js') }}"></script>
-<script src="{{ asset('scripts/compare.js') }}"></script>
+@endsection
 
-
-
+@section('javascript')
+    <script src="{{ asset('scripts/fav.js') }}"></script>
+    <script src="{{ asset('scripts/compare.js') }}"></script>
+@endsection

@@ -1,4 +1,5 @@
-<x-layout>
+@extends('components.layout')
+@section('layout')
     <div id="titlebar">
         <div class="container">
             <div class="row">
@@ -32,8 +33,8 @@
                                     <form action="{{ route('removeComparison', $property->property->id) }}" method="post">
                                         @csrf
                                         @method('delete')
-                                        <div class="clp-img">
-                                            <img src="{{ asset('storage/' . $property->property->images[0]->path) }}" alt="">
+                                        <div class="clp-img" height="160px">
+                                            <img height="160px" src="{{ asset('storage/' . $property->property->images[0]->path) }}" alt="">
 {{--                                            <span class="remove-from-compare"><i class="fa fa-close"></i>Remove</span>--}}
                                         </div>
 
@@ -104,4 +105,4 @@
             </div>
         </div>
     </div>
-</x-layout>
+@endsection

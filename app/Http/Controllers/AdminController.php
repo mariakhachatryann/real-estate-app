@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginAdminRequest;
 use App\Services\AdminService;
-use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {

@@ -832,6 +832,15 @@ button.widget-button {
 	color: #ffa800;
 }
 
+.success-message {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
 .widget-button.save .like-icon:after {
 	color: #ffa800;
 }

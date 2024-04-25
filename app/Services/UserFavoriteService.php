@@ -7,13 +7,13 @@ use App\Models\UserFavorites;
 
 class UserFavoriteService
 {
-    public function getUserFavorites()
+    public function getUserFavorites(): array
     {
         $favoriteProperties = Auth::guard('user')->user()->favorites;
         return compact('favoriteProperties');
     }
 
-    public function storeFavorite($userId, $propertyId)
+    public function storeFavorite(string $userId, string $propertyId): void
     {
         $existingFavorite = UserFavorites::where('property_id', $propertyId)
             ->where('user_id', $userId)
@@ -27,7 +27,7 @@ class UserFavoriteService
         }
     }
 
-    public function removeFavorite($userId, $propertyId)
+    public function removeFavorite(string $userId, string $propertyId): bool
     {
         $favorite = UserFavorites::where('property_id', $propertyId)
             ->where('user_id', $userId)

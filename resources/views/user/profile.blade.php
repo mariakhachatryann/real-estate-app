@@ -1,5 +1,5 @@
-<x-layout>
-
+@extends('components.layout')
+@section('layout')
     <!-- Titlebar
     ================================================== -->
     <div id="titlebar">
@@ -36,7 +36,9 @@
                 <div class="row">
 
                     @if (session('success'))
-                        <p>{{ session('success') }}</p>
+                        <div class="success-message">
+                            {{ session('success') }}
+                        </div>
                     @endif
 
                         @if ($errors->any())
@@ -92,4 +94,4 @@
 
         </div>
     </div>
-</x-layout>
+@endsection

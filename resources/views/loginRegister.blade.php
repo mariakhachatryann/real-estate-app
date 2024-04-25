@@ -1,4 +1,5 @@
-<x-layout>
+@extends('components.layout')
+@section('layout')
         <!-- Titlebar
         ================================================== -->
         <div id="titlebar">
@@ -157,7 +158,5 @@
             </div>
 
         </div>
-
-</x-layout>
-<!-- Wrapper -->
+@endsection
 

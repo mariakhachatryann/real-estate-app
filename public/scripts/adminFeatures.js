@@ -1,4 +1,9 @@
 $(document).ready(function () {
+    // Function to get CSRF token
+    function getCSRFToken() {
+        return $('meta[name="csrf-token"]').attr('content');
+    }
+
     $(".edit-feature").on("click", function () {
         let checkbox = $(this).prev();
         let input = $(this).next().next();
@@ -19,10 +24,11 @@ $(document).ready(function () {
                 method: "PUT",
                 data: {
                     name: newFeatureName,
-                    _token: "{{ csrf_token() }}"
+                    _token: getCSRFToken() // Include CSRF token here
                 },
                 success: function (response) {
                     checkbox.text(newFeatureName);
+                    location.reload();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
@@ -41,7 +47,7 @@ $(document).ready(function () {
             url: "/features/" + featureId,
             method: "DELETE",
             data: {
-                _token: "{{ csrf_token() }}"
+                _token: getCSRFToken() // Include CSRF token here
             },
             success: function (response) {
                 $(this).parent().remove();
@@ -57,11 +63,11 @@ $(document).ready(function () {
         var newFeatureName = $("#newFeature").val();
         e.preventDefault();
         $.ajax({
-            url: "{{ route('features.store') }}",
+            url: "/features",
             type: 'POST',
             data: {
                 name: newFeatureName,
-                _token: "{{ csrf_token() }}"
+                _token: getCSRFToken() // Include CSRF token here
             },
             success: function (response) {
                 var featureId = response.id;

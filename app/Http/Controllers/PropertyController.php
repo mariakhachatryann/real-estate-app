@@ -6,7 +6,6 @@ use App\Http\Requests\AddPropertyRequest;
 use App\Http\Requests\PropertyImageRequest;
 use App\Http\Requests\SearchPropertyRequest;
 use App\Models\Feature;
-use App\Models\PropertyImage;
 use App\Services\PropertyService;
 
 class PropertyController extends Controller
@@ -39,14 +38,13 @@ class PropertyController extends Controller
     public function uploadPropertyImage(PropertyImageRequest $request)
     {
         $imageIds = $this->propertyService->savePropertyImages($request->file('file'));
-
         return response()->json(['imageIds' => $imageIds]);
     }
 
     public function getUserProperties()
     {
-        $data = $this->propertyService->getUserProperties();
-        return view('user.properties', $data);
+        $properties = $this->propertyService->getUserProperties();
+        return view('user.properties', compact('properties'));
     }
 
     public function show(string $id)
@@ -63,18 +61,20 @@ class PropertyController extends Controller
 
     public function update(AddPropertyRequest $request, string $id)
     {
-        return $this->propertyService->updateProperty($request, $id);
+        $this->propertyService->updateProperty($request, $id);
+        return redirect()->back()->with('success', 'Property updated successfully');
     }
 
     public function destroy(string $id)
     {
-        return $this->propertyService->deleteProperty($id);
+        $this->propertyService->deleteProperty($id);
+        return redirect()->route('myProperties')->with('success', 'Property deleted successfully');
     }
 
     public function search(SearchPropertyRequest $request)
     {
-        ['properties' => $properties, 'statuses' => $statuses] = $this->propertyService->searchProperties($request);
+        $properties = $this->propertyService->searchProperties($request);
         $allFeatures = Feature::all();
-        return view('search', compact('properties', 'statuses', 'allFeatures'));
+        return view('search', compact('properties', 'allFeatures'));
     }
 }

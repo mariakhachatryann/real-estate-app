@@ -1,4 +1,6 @@
-function add(propertyId, csrfToken, favoriteButton) {
+function add(propertyId, csrfToken) {
+    var btn = $("#fav" + propertyId);
+
     $.ajax({
         url: '/my-favorites',
         method: 'POST',
@@ -8,7 +10,6 @@ function add(propertyId, csrfToken, favoriteButton) {
         },
         success: function(response) {
             console.log('Property added to favorites successfully');
-            favoriteButton.addClass('liked');
         },
         error: function(xhr, status, error) {
             console.error('Error adding property to favorites:', error);
@@ -16,7 +17,9 @@ function add(propertyId, csrfToken, favoriteButton) {
     });
 }
 
-function remove(propertyId, csrfToken, favoriteButton) {
+function remove(propertyId, csrfToken) {
+    var btn = $("#fav" + propertyId);
+
     $.ajax({
         url: '/my-favorites/' + propertyId,
         method: 'DELETE',
@@ -25,7 +28,6 @@ function remove(propertyId, csrfToken, favoriteButton) {
         },
         success: function(response) {
             console.log('Property removed from favorites successfully');
-            favoriteButton.removeClass('liked');
         },
         error: function(xhr, status, error) {
             console.error('Error removing property from favorites:', error);
@@ -38,8 +40,8 @@ function addToFavorites(propertyId, buttonElement) {
     var csrfToken = $('#csrf-token').val();
 
     if (!favoriteButton.hasClass('liked')) {
-        add(propertyId, csrfToken, favoriteButton)
+        add(propertyId, csrfToken)
     } else {
-        remove(propertyId, csrfToken, favoriteButton)
+        remove(propertyId, csrfToken)
     }
 }

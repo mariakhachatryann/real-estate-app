@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class UserCompareService
 {
-    public function getComparisons()
+    public function getComparisons(): array
     {
         $properties = Auth::guard('user')->user()->compare;
         $features = Feature::all();
         return compact('properties', 'features');
     }
 
-    public function storeComparison($userId, $propertyId)
+    public function storeComparison(string $userId, string $propertyId): ?UserCompare
     {
         $existingCompare = UserCompare::where('property_id', $propertyId)
             ->where('user_id', $userId)
@@ -33,18 +33,18 @@ class UserCompareService
         return null;
     }
 
-    public function removeComparison($userId, $propertyId)
+    public function removeComparison(string $userId, string $propertyId): bool
     {
         $compare = UserCompare::where('property_id', $propertyId)->where('user_id', $userId)->first();
         if ($compare) {
             $compare->delete();
-            return true; // Return a success message or handle as needed
+            return true;
         }
-        return false; // Handle case where no matching record is found
+        return false;
     }
 
 
-    public function resetComparisons()
+    public function resetComparisons(): void
     {
         UserCompare::truncate();
     }

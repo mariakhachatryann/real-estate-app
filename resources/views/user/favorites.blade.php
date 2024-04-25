@@ -1,4 +1,5 @@
-<x-layout>
+@extends('components.layout')
+@section('layout')
     <div id="titlebar">
         <div class="container">
             <div class="row">
@@ -54,4 +55,4 @@
             </div>
         </div>
     </div>
-</x-layout>
+@endsection

@@ -1,4 +1,5 @@
-<x-layout>
+@extends('components.layout')
+@section('layout')
     <!-- Titlebar
   ================================================== -->
     <div id="titlebar">
@@ -26,8 +27,10 @@
     ================================================== -->
     <div class="container">
         <div class="row">
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+            @if (session('success'))
+                <div class="success-message">
+                    {{ session('success') }}
+                </div>
             @endif
             @if(session('error'))
                 <div class="alert alert-danger">
@@ -42,7 +45,6 @@
                     <div class="col-md-6 my-profile">
                         <form action="{{ route('changePassword') }}" method="post">
                             @csrf
-
                             <h4 class="margin-top-0 margin-bottom-30">Change Password</h4>
                             <label for="current_password">Current Password</label>
                             <input id="current_password" type="password" name="current_password" required>
@@ -56,17 +58,13 @@
                             <button type="submit" class="margin-top-20 button">Save Changes</button>
                         </form>
                     </div>
-
                     <div class="col-md-6">
                         <div class="notification notice">
                             <p>Your password should be at least 12 random characters long to be safe</p>
-
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
-</x-layout>
+@endsection

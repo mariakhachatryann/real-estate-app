@@ -3,13 +3,11 @@
 namespace App\Services;
 use App\Http\Requests\AddPropertyRequest;
 use App\Http\Requests\SearchPropertyRequest;
-use App\Http\Requests\PropertyImageRequest;
 use App\Models\Feature;
 use App\Models\Property;
 use App\Models\PropertyAddress;
 use App\Models\PropertyFeature;
 use App\Models\PropertyImage;
-use App\Models\UserCompare;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -17,58 +15,29 @@ use App\Models\UserFavorites;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
 use Illuminate\Support\Str;
-use App\Http\Controllers\PropertyController;
-use App\Jobs\SendUserMailJob;
-use Illuminate\Support\Facades\Redis;
 class PropertyService
 {
-    const STATUS_FOR_SALE = 0;
-    const STATUS_FOR_RENT = 1;
-    const STATUSES  = [
-        self::STATUS_FOR_SALE => 'Sale',
-        self::STATUS_FOR_RENT => 'Rent',
-    ];
-    const TYPE_APARTMENT = 0;
-    const TYPE_HOUSE = 1;
-    const TYPE_COMMERCIAL = 2;
-    const TYPE_GARAGE = 3;
-    const TYPE_LOFT = 4;
-    const TYPES  = [
-        self::TYPE_APARTMENT => 'Apartment',
-        self::TYPE_HOUSE => 'House',
-        self::TYPE_COMMERCIAL => 'Commercial',
-        self::TYPE_GARAGE => 'Garage',
-        self::TYPE_LOFT => 'Loft',
-    ];
-    public function getIndexData()
+
+    public function getIndexData(): array
     {
+        $user = Auth::guard('user')->user();
         $properties = Property::with('images', 'address')
             ->latest()
             ->take(10)
             ->get();
 
-        $statuses = [
-            self::STATUS_FOR_SALE => 'Sale',
-            self::STATUS_FOR_RENT => 'Rent',
-        ];
-
         $favoritePropertyIds = [];
         $comparePropertyIds = [];
 
         if (Auth::guard('user')->user()) {
-            $favoritePropertyIds = UserFavorites::where('user_id', Auth::guard('user')->user()->id)
-                ->pluck('property_id')
-                ->all();
-
-            $comparePropertyIds = UserCompare::where('user_id', Auth::guard('user')->user()->id)
-                ->pluck('property_id')
-                ->all();
+            $favoritePropertyIds = $user->favorites()->pluck('property_id')->all();
+            $comparePropertyIds = $user->compare()->pluck('property_id')->all();
         }
 
-        return compact('properties', 'statuses', 'favoritePropertyIds', 'comparePropertyIds');
+        return compact('properties', 'favoritePropertyIds', 'comparePropertyIds');
     }
 
-    public function createProperty(AddPropertyRequest $request)
+    public function createProperty(AddPropertyRequest $request): void
     {
         $property = new Property();
         $user = Auth::guard('user')->user();
@@ -82,7 +51,7 @@ class PropertyService
                 'password' => Hash::make($randomPassword),
             ]);
 
-            SendUserMailJob::dispatch($user, $randomPassword)->onQueue('emails');
+            Mail::to($user->email)->queue(new UserMail($user, $randomPassword));
         }
 
         $property->fill($request->except(['_token', 'file', 'address', 'city', 'state', 'zip_code', 'features', 'user_name', 'user_email', 'user_phone', 'imageIds']));
@@ -105,10 +74,9 @@ class PropertyService
 
         $imgIds = explode(",", $request->imageIds);
         PropertyImage::whereIn('id', $imgIds)->whereNull('property_id')->update(['property_id' => $property->id]);
-        return redirect()->back()->with('success', 'Property added successfully');
     }
 
-    public function savePropertyImages($files)
+    public function savePropertyImages($files): array
     {
         $imageIds = [];
 
@@ -128,17 +96,13 @@ class PropertyService
     public function getUserProperties()
     {
         $user = Auth::guard('user')->user();
-        $properties = $user->properties()->get();
-        $statuses = self::STATUSES;
-
-        return compact('properties', 'statuses');
+        return $user->properties()->get();
     }
 
-    public function getProperty(string $id)
+    public function getProperty(string $id): array
     {
         $property = Property::findOrFail($id);
         $properties = Property::limit(5)->get();
-        $statuses = self::STATUSES;
 
         $favoritePropertyIds = [];
 
@@ -156,20 +120,19 @@ class PropertyService
         })
             ->where('id', '!=', $property->id)
             ->get();
-        return compact('property', 'statuses', 'favoritePropertyIds', 'similarProperties', 'properties');
+        return compact('property', 'favoritePropertyIds', 'similarProperties', 'properties');
     }
 
-    public function getPropertyForEditing(string $id)
+    public function getPropertyForEditing(string $id): array
     {
         $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
-        $statuses = self::STATUSES;
         $features = Feature::all();
         $imageIds = implode(',', $property->images->pluck('id')->toArray());
 
-        return compact('property', 'features', 'statuses', 'imageIds');
+        return compact('property', 'features', 'imageIds');
     }
 
-    public function updateProperty(AddPropertyRequest $request, string $id)
+    public function updateProperty(AddPropertyRequest $request, string $id): void
     {
         $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
         $property->fill($request->except(['_token', '_method', 'file', 'address', 'city', 'state', 'zip_code', 'features', 'user_name', 'user_email', 'user_phone', 'imageIds']));
@@ -189,11 +152,9 @@ class PropertyService
         }
 
         $property->save();
-
-        return redirect()->back()->with('success', 'Property updated successfully');
     }
 
-    public function deleteProperty(string $id)
+    public function deleteProperty(string $id): void
     {
         $property = Auth::guard('user')->user()->properties()->where('id', $id)->first();
 
@@ -204,8 +165,6 @@ class PropertyService
         $property->features()->detach();
         $property->images()->delete();
         $property->delete();
-
-        return redirect()->route('myProperties')->with('success', 'Property deleted successfully');
     }
 
     public function searchProperties(SearchPropertyRequest $request)
@@ -264,9 +223,6 @@ class PropertyService
             }
         }
 
-        $properties = $properties->paginate(10);
-        $statuses = self::STATUSES;
-
-        return ['properties' => $properties, 'statuses' => $statuses];
+        return $properties->paginate(10);
     }
 }

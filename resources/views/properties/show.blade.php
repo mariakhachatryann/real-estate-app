@@ -1,5 +1,5 @@
-<x-layout>
-
+@extends('components.layout')
+@section('layout')
         <!-- Titlebar
         ================================================== -->
         <div id="titlebar" class="property-titlebar margin-bottom-0">
@@ -9,7 +9,7 @@
 
                         <a href="/properties" class="back-to-listings"></a>
                         <div class="property-title">
-                            <h2>{{ $property->title }}<span class="property-badge">For {{ $statuses[$property->status] }}</span></h2>
+                            <h2>{{ $property->title }}<span class="property-badge">For {{ \App\Models\Property::STATUSES[$property->status] }}</span></h2>
                             <span>
 						<div class="listing-address">
 							<i class="fa fa-map-marker"></i>
@@ -110,45 +110,45 @@
                         <div class="layout-switcher hidden"><a href="#" class="list"><i class="fa fa-th-list"></i></a></div>
                         <div class="listings-container list-layout">
 
-                            @foreach($similarProperties as $property)
+                            @foreach($similarProperties as $prop)
                                 <div class="listing-item">
 
-                                    <a href="{{ route('properties.show', $property->id) }}" class="listing-img-container">
+                                    <a href="{{ route('properties.show', $prop->id) }}" class="listing-img-container">
 
                                         <div class="listing-badges">
-                                            <span>For {{ $statuses[$property->status] }}</span>
+                                            <span>For {{ App\Models\Property::STATUSES[$prop->status] }}</span>
                                         </div>
 
                                         <div class="listing-img-content">
-                                            <span class="listing-price">$ {{ $property->price }} <i>monthly</i></span>
-                                            <span class="like-icon with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
+                                            <span class="listing-price">$ {{ $prop->price }} <i>monthly</i></span>
+                                            <span class="like-icon with-tip{{ in_array($prop->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="{{ in_array($property->id, $favoritePropertyIds) ?  'Remove from Bookmarks' : ' Add to bookmarks' }}" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"></span>
                                         </div>
 
-                                        <img src="{{ asset('storage/' . $property->images[0]->path) }}" alt="">
+                                        <img src="{{ asset('storage/' . $prop->images[0]->path) }}" alt="">
 
                                     </a>
 
                                     <div class="listing-content">
 
                                         <div class="listing-title">
-                                            <h4><a href="#">{{ $property->title }}</a></h4>
+                                            <h4><a href="#">{{ $prop->title }}</a></h4>
                                             <a href="https://maps.google.com/maps?q=221B+Baker+Street,+London,+United+Kingdom&hl=en&t=v&hnear=221B+Baker+St,+London+NW1+6XE,+United+Kingdom" class="listing-address popup-gmaps">
                                                 <i class="fa fa-map-marker"></i>
-                                                {{ $property->address->address }}
+                                                {{ $prop->address->address }}
                                             </a>
 
-                                            <a href="{{ route('properties.show', $property->id) }}" class="details button border">Details</a>
+                                            <a href="{{ route('properties.show', $prop->id) }}" class="details button border">Details</a>
                                         </div>
 
                                         <ul class="listing-details">
-                                            <li>{{ $property->area }} sq ft</li>
-                                            <li>{{ $property->rooms }} Rooms</li>
-                                            <li>{{ $property->bathrooms }} Bathrooms</li>
-                                            <li>{{ $property->bedrooms }} Bedrooms</li>
+                                            <li>{{ $prop->area }} sq ft</li>
+                                            <li>{{ $prop->rooms }} Rooms</li>
+                                            <li>{{ $prop->bathrooms }} Bathrooms</li>
+                                            <li>{{ $prop->bedrooms }} Bedrooms</li>
                                         </ul>
 
                                         <div class="listing-footer">
-                                            <a href="#"><i class="fa fa-user"></i> {{ $property->creator->username }}</a>
+                                            <a href="#"><i class="fa fa-user"></i> {{ $prop->creator->username }}</a>
                                             <span><i class="fa fa-calendar-o"></i> 4 days ago</span>
                                         </div>
 
@@ -171,7 +171,7 @@
                         <!-- Widget -->
                         <div class="widget margin-bottom-30">
                             <button class="widget-button with-tip" data-tip-content="Print"><i class="sl sl-icon-printer"></i></button>
-                            <button class="widget-button with-tip with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="Add to Bookmarks" onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"><i class="fa fa-star-o"></i></button>
+                            <button class="widget-button bookmark with-tip{{ in_array($property->id, $favoritePropertyIds) ? ' liked' : '' }}" data-tip-content="{{ in_array($property->id, $favoritePropertyIds) ?  'Remove from Bookmarks' : ' Add to bookmarks' }} " onclick="addToFavorites({{ $property->id }}, this)" id="fav{{ $property->id }}"><i class="fa fa-star-o"></i></button>
                             <button class="widget-button with-tip compare-widget-button" onclick="compare({{ $property->id }}, true)" id="compare{{ $property->id }}" data-tip-content="Add to Compare"><i class="icon-compare"></i></button>
                             <div class="clearfix"></div>
                         </div>
@@ -291,7 +291,7 @@
                                 </div>
 
                                 @if (session('success'))
-                                    <div class="alert alert-success">
+                                    <div class="success-message">
                                         {{ session('success') }}
                                     </div>
                                 @endif
@@ -300,7 +300,7 @@
                                     @csrf
                                     <input type="text" name="email" placeholder="Your Email" pattern="^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$">
                                     <input type="text" name="phone" placeholder="Your Phone">
-                                    <textarea name="message">I'm interested in this property [{{ $property->id }}] and I'd like to know more details.</textarea>
+                                    <textarea name="message">I'm interested in this property [{{ $property->id }}, {{ $property->title }}] and I'd like to know more details.</textarea>
                                     <button type="submit" class="button fullwidth margin-top-5">Send Message</button>
                                 </form>
 
@@ -358,7 +358,7 @@
                                             <a href="#" class="listing-img-container">
                                                 <div class="listing-badges">
                                                     <span class="featured">Featured</span>
-                                                    <span>For {{ $statuses[$prop->status] }}</span>
+                                                    <span>For {{ App\Models\Property::STATUSES[$prop->status] }}</span>
                                                 </div>
                                                 <div class="listing-img-content">
                                                     <span class="listing-compact-title">{{ $prop->title }} <i>${{ number_format($prop->price) }}</i></span>
@@ -369,26 +369,20 @@
                                                         <li>Baths <span>{{ $prop->bathrooms }}</span></li>
                                                     </ul>
                                                 </div>
-
                                                 <img src="{{ asset('storage/' . $prop->images[0]->path) }}" alt="">
                                             </a>
-
                                         </div>
                                     </div>
-
                                 @endforeach
-
                             </div>
-
                         </div>
-                        <!-- Widget / End -->
-
                     </div>
                 </div>
-                <!-- Sidebar / End -->
-
             </div>
         </div>
-</x-layout>
-<script src="{{ asset('scripts/fav.js') }}"></script>
-<script src="{{ asset('scripts/compare.js') }}"></script>
+@endsection
+
+@section('javascript')
+    <script src="{{ asset('scripts/fav.js') }}"></script>
+    <script src="{{ asset('scripts/compare.js') }}"></script>
+@endsection

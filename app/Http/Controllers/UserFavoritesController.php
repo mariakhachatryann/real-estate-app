@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFavoritesRequest;
 use App\Services\UserFavoriteService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserFavoritesController extends Controller
@@ -21,7 +20,7 @@ class UserFavoritesController extends Controller
         return view('user.favorites',$favoriteProperties);
     }
 
-    public function store(StoreFavoritesRequest $request)
+    public function store(StoreFavoritesRequest $request): void
     {
         $userId = Auth::guard('user')->user()->id;
         $propertyId = $request->propertyId;

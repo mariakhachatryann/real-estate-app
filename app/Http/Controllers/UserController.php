@@ -89,7 +89,7 @@ class UserController extends Controller
         }
     }
 
-    public function messageAgent(AgentMessageRequest $request, $id)
+    public function messageAgent(AgentMessageRequest $request, string $id)
     {
         $agentDetails = User::findOrFail($id);
         $this->userService->messageToAgent($request->email, $request->phone, $request->message, $agentDetails);
